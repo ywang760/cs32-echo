@@ -1,0 +1,46 @@
+.repl {
+  position: relative;
+  min-height: 95vh;
+}
+
+.repl-history {
+  height: 85vh;
+  margin: auto;
+  display: block;
+  overflow-y: scroll;
+  background-color: rgb(255, 255, 232);
+}
+
+.repl-input {
+  margin: auto;
+  height: 10vh;
+  display: flex;
+}
+
+#repl-command-box {
+  width: 75%;
+  margin: auto;
+  display: block;
+}
+
+#mode {
+  margin: auto;
+}
+
+button {
+  margin: auto;
+  display: block;
+}
+
+.history-content {
+  margin-left: 40px;
+}
+
+table, th, td {
+  margin: 10px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+}
