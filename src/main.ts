@@ -1,16 +1,16 @@
 import modeF from "./commands/mode.js";
-import {loadF, parsedData} from "./commands/load_csv.js";
-import {searchF} from "./commands/search.js";
-console.log("import logged")
-import {viewF} from "./commands/view.js";
+import {loadF} from "./commands/load_csv.js";
+import searchF from "./commands/search.js";
+import viewF from "./commands/view.js";
+import createErrorMessage from "./utils/errorMessage.js";
 
-console.log("file logged")
 let m = "brief"; // mode, initially set to brief
 let history: Array<String> = []; // history of commands, only for testing purposes
 let maybeInput: HTMLElement | null;
 let commands: Map<String, Function> = new Map();
 commands.set("mode", modeF);
 commands.set("load_csv", loadF);
+commands.set("load", loadF);
 commands.set("view", viewF);
 commands.set("search", searchF);
 
@@ -24,11 +24,9 @@ window.onload = () => {
   } else if (!(maybeInput instanceof HTMLInputElement)) {
     console.log(`Found element ${maybeInput}, but it wasn't an input`);
   } else {
-    console.log("else logged")
     maybeInput.focus();
     maybeInput.addEventListener("keypress", (event: KeyboardEvent) => {
       if (event.key == "Enter") {
-        console.log("enter logged")
         updateAndRenderHistory(); // submit on enter
       }
     });
@@ -44,6 +42,9 @@ window.onload = () => {
   } else {
     submitButton.addEventListener("click", () => updateAndRenderHistory());
   }
+
+  // renders command instructions
+
 };
 
 
@@ -62,7 +63,6 @@ function updateAndRenderHistory() {
   }
 }
 
-
 /**
  * This function updates the history and returns the input.
  */
@@ -77,7 +77,7 @@ function updateHistory(): string {
   } else {
     const input: string = maybeInput.value;
     if (input !== "") {
-      console.log(`Submitting commandw: ${input}`);
+      console.log(`Submitting command: ${input}`);
       history.push(input);
       console.log(history);
       maybeInput.value = "";
@@ -99,6 +99,7 @@ function renderMode(input: string) {
   } else if (!(mode instanceof HTMLParagraphElement)) {
     console.log(`Found element ${mode}, but it wasn't a paragraph`);
   } else {
+
     const tempMode: string = input.split(" ")[1].toLowerCase();
     if (tempMode == "b" || tempMode == "brief") {
       m = "brief";
@@ -107,8 +108,9 @@ function renderMode(input: string) {
     } else {
       console.log(`Unknown mode ${tempMode}`);
     }
-    mode.innerHTML = `Current mode: ${m}`;
+    mode.innerHTML = `Mode: ${m}`;
     console.log(`Mode set to ${m}`);
+
   }
 }
 
@@ -118,20 +120,13 @@ function renderMode(input: string) {
  */
 function executeCommand(input: string): HTMLElement {
   const parsedInput: Array<string> = input.split(/\s/);
-  const command: string = parsedInput[0];
+  const command: string = parsedInput[0].toLowerCase();
   const args: Array<string> = parsedInput.slice(1);
   const foo: Function | undefined = commands.get(command);
   if (foo == undefined) {
-    const output = document.createElement("p");
-    output.className = "history-content";
-    output.innerHTML = `Unknown command: ${input}`;
-    return output;
-  } else if (foo == viewF) {
-    return foo(parsedData)
-  } else if (foo == searchF) {
-    return foo(args[0], args.slice(1), parsedData)
+    return createErrorMessage(`Unknown command: ${input}`)
   } else {
-    console.log(args);
+    console.log("Arguments are " + args);
     return foo(...args);
   }
 }
@@ -141,14 +136,11 @@ function executeCommand(input: string): HTMLElement {
  * @param input A non-empty input string.
  */
 function renderHistory(input: string) {
-  const replHistory: HTMLCollectionOf<Element> = document.getElementsByClassName(
-      "repl-history"
-  );
-  if (replHistory == null || replHistory.length < 1) {
-    console.log("Couldn't find history element");
+  const oldHistory = document.getElementsByClassName("repl-history")[0] as HTMLElement;
+  if (input === "clear") {
+    oldHistory.innerHTML = "";
     return;
   }
-  const oldHistory = replHistory[0];
 
   const newElement: HTMLElement = executeCommand(input);
   if (m == "brief") {

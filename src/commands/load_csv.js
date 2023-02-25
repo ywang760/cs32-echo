@@ -1,27 +1,30 @@
 import { exampleCSV2 } from "../mockedJson.js";
+import createErrorMessage from "../utils/errorMessage.js";
 var loadedData = new Map();
 var haveHeader;
+var thisData;
 function mockParse(datapath) {
     // mock data
     var parsedData = exampleCSV2;
     haveHeader = true;
     return parsedData.map(function (row) { return row.map(function (cell) { return cell.toString(); }); });
 }
-var data;
-var parsedData;
 function loadF(input) {
-    data = loadedData.get(input);
     var message = document.createElement("p");
     message.className = "history-content";
+    if (typeof input == "undefined") {
+        return createErrorMessage("load error: No datapath provided");
+    }
+    var data = loadedData.get(input);
     if (data == undefined) {
-        parsedData = mockParse(input);
-        // const data: HTMLElement = displayData(parsedData);
-        // loadedData.set(input, data);
-        message.innerHTML = "new data has been loaded";
+        thisData = mockParse(input);
+        loadedData.set(input, thisData);
+        message.innerHTML = "New data have been loaded";
     }
     else {
-        message.innerHTML = "old data has been loaded";
+        thisData = data;
+        message.innerHTML = "Old data have been loaded";
     }
     return message;
 }
-export { loadF, loadedData, parsedData };
+export { loadF, thisData, haveHeader };

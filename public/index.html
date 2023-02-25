@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 
-<!-- 
-    This is a reasonable starting point for the HTML in Sprint 1.
-    Feel free to modify this as you wish.
--->
-
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>CS32 echo project</title>
-    <link rel="stylesheet" href="../styles/main.css" type="text/css" />
-  </head>
-  <body>
-    <!-- Tell the browser what to show if JavaScript/TypeScript is disabled. -->
-    <noscript>This example requires JavaScript to run.</noscript>
-    <!-- Prepare a region of the page to hold the entire REPL interface -->
-    <div class="repl">
-      <!-- Prepare a region of the page to hold the command history -->
-      <div class="repl-history"></div>
-      <hr />
-      <!-- Prepare a region of the page to hold the command input box -->
-      <div class="repl-input">
-        <p id="mode">Current mode: brief</p>
-        <input
-          type="text"
-          id="repl-command-box"
-          placeholder="Enter command here"
-        />
-        <button id="submit-button">Submit</button>
-      </div>
-    </div>
-    <!-- Load the script! Note: the .js extension is because browsers don't use TypeScript
-    directly. Instead, the author of the site needs to compile the TypeScript to JavaScript. -->
-    <script type="module" src="../src/main.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8"/>
+  <title>CS32 echo project</title>
+  <link rel="stylesheet" href="../styles/main.css" type="text/css"/>
+</head>
+<body style="font-family: Garamond,serif">
+<noscript>This example requires JavaScript to run.</noscript>
+<!-- Prepare a region of the page to hold the entire REPL interface -->
+<div class="repl">
+  <!-- Prepare a region of the page to hold the command history -->
+  <h1 style="text-align: center">Hello! Welcome to Echo!</h1>
+
+  <div class="repl-history">
+  </div>
+
+  <hr/>
+  <!-- Prepare a region of the page to hold the command input box -->
+  <div class="repl-input">
+    <p id="mode">Mode: brief</p>
+    <label for="repl-command-box"></label><input
+      type="text"
+      id="repl-command-box"
+      placeholder="Enter command here"
+  />
+    <button id="submit-button">Submit</button>
+  </div>
+</div>
+<!-- Load the script! Note: the .js extension is because browsers don't use TypeScript
+directly. Instead, the author of the site needs to compile the TypeScript to JavaScript. -->
+<script type="module" src="../src/main.js"></script>
+</body>
 </html>

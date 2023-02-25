@@ -4,7 +4,7 @@
 }
 
 .repl-history {
-  height: 85vh;
+  height: 75vh;
   margin: auto;
   display: block;
   overflow-y: scroll;
@@ -41,6 +41,8 @@ table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
 }
+
 th, td {
   padding: 10px;
 }
+

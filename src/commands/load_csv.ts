@@ -1,7 +1,9 @@
 import {exampleCSV1, exampleCSV2} from "../mockedJson.js";
+import createErrorMessage from "../utils/errorMessage.js";
 
-let loadedData: Map<string, HTMLElement> = new Map();
+let loadedData: Map<string, Array<Array<string>>> = new Map();
 let haveHeader: boolean;
+let thisData: Array<Array<string>>;
 
 function mockParse(datapath: string): Array<Array<string>> {
   // mock data
@@ -10,23 +12,23 @@ function mockParse(datapath: string): Array<Array<string>> {
   return parsedData.map((row) => row.map((cell) => cell.toString()));
 }
 
-let data: HTMLElement | undefined;
-let parsedData: Array<Array<string>> | undefined;
-
 function loadF(input: string): HTMLElement {
-  data = loadedData.get(input);
   const message = document.createElement("p");
   message.className = "history-content";
-  if (data == undefined) {
-    parsedData = mockParse(input);
-    // const data: HTMLElement = displayData(parsedData);
-    // loadedData.set(input, data);
-    message.innerHTML = "new data has been loaded";
+  if (typeof input == "undefined") {
+    return createErrorMessage("load error: No datapath provided");
   }
-  else{
-    message.innerHTML = "old data has been loaded";
+  let data: Array<Array<string>> | undefined = loadedData.get(input);
+
+  if (data == undefined) {
+    thisData = mockParse(input);
+    loadedData.set(input, thisData);
+    message.innerHTML = "New data have been loaded";
+  } else {
+    thisData = data;
+    message.innerHTML = "Old data have been loaded";
   }
   return message;
 }
 
-export {loadF, loadedData, parsedData};
+export {loadF, thisData, haveHeader};

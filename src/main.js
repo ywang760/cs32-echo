@@ -1,15 +1,15 @@
 import modeF from "./commands/mode.js";
-import { loadF, parsedData } from "./commands/load_csv.js";
-import { searchF } from "./commands/search.js";
-console.log("import logged");
-import { viewF } from "./commands/view.js";
-console.log("file logged");
+import { loadF } from "./commands/load_csv.js";
+import searchF from "./commands/search.js";
+import viewF from "./commands/view.js";
+import createErrorMessage from "./utils/errorMessage.js";
 var m = "brief"; // mode, initially set to brief
 var history = []; // history of commands, only for testing purposes
 var maybeInput;
 var commands = new Map();
 commands.set("mode", modeF);
 commands.set("load_csv", loadF);
+commands.set("load", loadF);
 commands.set("view", viewF);
 commands.set("search", searchF);
 /**
@@ -24,11 +24,9 @@ window.onload = function () {
         console.log("Found element ".concat(maybeInput, ", but it wasn't an input"));
     }
     else {
-        console.log("else logged");
         maybeInput.focus();
         maybeInput.addEventListener("keypress", function (event) {
             if (event.key == "Enter") {
-                console.log("enter logged");
                 updateAndRenderHistory(); // submit on enter
             }
         });
@@ -44,6 +42,7 @@ window.onload = function () {
     else {
         submitButton.addEventListener("click", function () { return updateAndRenderHistory(); });
     }
+    // renders command instructions
 };
 /**
  * This function updates the history and renders the history, called when the submit button is clicked or enter is pressed.
@@ -75,7 +74,7 @@ function updateHistory() {
     else {
         var input = maybeInput.value;
         if (input !== "") {
-            console.log("Submitting commandw: ".concat(input));
+            console.log("Submitting command: ".concat(input));
             history.push(input);
             console.log(history);
             maybeInput.value = "";
@@ -109,7 +108,7 @@ function renderMode(input) {
         else {
             console.log("Unknown mode ".concat(tempMode));
         }
-        mode.innerHTML = "Current mode: ".concat(m);
+        mode.innerHTML = "Mode: ".concat(m);
         console.log("Mode set to ".concat(m));
     }
 }
@@ -119,23 +118,14 @@ function renderMode(input) {
  */
 function executeCommand(input) {
     var parsedInput = input.split(/\s/);
-    var command = parsedInput[0];
+    var command = parsedInput[0].toLowerCase();
     var args = parsedInput.slice(1);
     var foo = commands.get(command);
     if (foo == undefined) {
-        var output = document.createElement("p");
-        output.className = "history-content";
-        output.innerHTML = "Unknown command: ".concat(input);
-        return output;
-    }
-    else if (foo == viewF) {
-        return foo(parsedData);
-    }
-    else if (foo == searchF) {
-        return foo(args[0], args.slice(1), parsedData);
+        return createErrorMessage("Unknown command: ".concat(input));
     }
     else {
-        console.log(args);
+        console.log("Arguments are " + args);
         return foo.apply(void 0, args);
     }
 }
@@ -144,12 +134,11 @@ function executeCommand(input) {
  * @param input A non-empty input string.
  */
 function renderHistory(input) {
-    var replHistory = document.getElementsByClassName("repl-history");
-    if (replHistory == null || replHistory.length < 1) {
-        console.log("Couldn't find history element");
+    var oldHistory = document.getElementsByClassName("repl-history")[0];
+    if (input === "clear") {
+        oldHistory.innerHTML = "";
         return;
     }
-    var oldHistory = replHistory[0];
     var newElement = executeCommand(input);
     if (m == "brief") {
         oldHistory.appendChild(newElement);
